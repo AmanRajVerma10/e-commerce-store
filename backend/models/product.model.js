@@ -16,7 +16,7 @@ const productSchema = new mongoose.Schema(
       type: String,
       required: [true, "Please provide a product image"],
     },
-    featured: { type: Boolean, default: false },
+    isFeatured: { type: Boolean, default: false },
   },
   { timestamps: true }
 );
