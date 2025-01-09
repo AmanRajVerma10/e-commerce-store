@@ -63,7 +63,7 @@ export const login = async (req, res) => {
       const { accessToken, refreshToken } = generateTokens(user._id);
       await storeRefreshToken(user._id, refreshToken);
       setCookies(res, accessToken, refreshToken);
-    }else{
+    } else {
       return res.status(401).json({ message: "Invalid email or password" });
     }
     return res.status(200).json({
@@ -101,26 +101,39 @@ export const logout = async (req, res) => {
 export const refreshToken = async (req, res) => {
   try {
     const refreshToken = req.cookies.refreshToken;
-    if(!refreshToken){
-      return res.status(401).json({message:"Refresh token not found"});
+    if (!refreshToken) {
+      return res.status(401).json({ message: "Refresh token not found" });
     }
     const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
     const storedToken = await redis.get(`refreshToken:${decoded.id}`);
-    if(refreshToken !== storedToken){
-      return res.status(401).json({message:"Invalid refresh token"});
+    if (refreshToken !== storedToken) {
+      return res.status(401).json({ message: "Invalid refresh token" });
     }
-    const accessToken=jwt.sign({id:decoded.id},process.env.ACCESS_TOKEN_SECRET,{
-      expiresIn:"15m"
+    const accessToken = jwt.sign(
+      { id: decoded.id },
+      process.env.ACCESS_TOKEN_SECRET,
+      {
+        expiresIn: "15m",
+      }
+    );
+    res.cookie("accessToken", accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 15 * 60 * 1000,
     });
-    res.cookie("accessToken",accessToken,{
-      httpOnly:true,
-      secure:process.env.NODE_ENV==="production",
-      sameSite:"strict",
-      maxAge:15*60*1000
-    });
-    return res.status(200).json({message:"Token refreshed successfully"});
+    return res.status(200).json({ message: "Token refreshed successfully" });
   } catch (error) {
     console.log("Error in refreshToken controller", error.message);
     return res.status(500).json({ message: error.message });
   }
-}
+};
+
+export const getProfile = async (req, res) => {
+  try {
+    return res.status(200).json(req.user);
+  } catch (error) {
+    console.log("Error in getProfile controller", error.message);
+    return res.status(500).json({ message: error.message });
+  }
+};
