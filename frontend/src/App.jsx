@@ -6,12 +6,17 @@ import NavBar from "./components/NavBar";
 import { Toaster } from "react-hot-toast";
 import { useUserStore } from "./stores/useUserStore";
 import { useEffect } from "react";
+import LoadingSpinner from "./components/LoadingSpinner";
 
 function App() {
-  const { user, checkAuth } = useUserStore();
+  const { user, checkAuth, checkingAuth } = useUserStore();
   useEffect(() => {
     checkAuth();
   }, [checkAuth]);
+
+  if (checkingAuth) {
+    return <LoadingSpinner />;
+  }
   return (
     <div className="min-h-screen bg-gray-900 text-white relative overflow-hidden">
       {/* Background gradient */}
