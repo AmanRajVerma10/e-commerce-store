@@ -6,9 +6,11 @@ import CartItem from "../components/CartItem";
 import PeopleAlsoBought from "../components/PeopleAlsoBought";
 import OrderSummary from "../components/OrderSummary";
 import GiftCouponCard from "../components/GiftCouponCard";
+import { useState } from "react";
 
 const CartPage = () => {
 	const { cart } = useCartStore();
+	const [showTestCardInfo, setShowTestCardInfo] = useState(true);
 
 	return (
 		<div className='py-8 md:py-16'>
@@ -39,6 +41,22 @@ const CartPage = () => {
 							animate={{ opacity: 1, x: 0 }}
 							transition={{ duration: 0.5, delay: 0.4 }}
 						>
+							{/* Test Card Notice */}
+							{showTestCardInfo && (
+								<div className="bg-gray-800 text-white text-sm p-3 rounded-md mb-4 flex justify-between items-center">
+									<p>
+										This is a demo app. Use <strong>4242 4242 4242 4242</strong> with
+										any future date & random CVC for testing checkout.
+									</p>
+									<button
+										onClick={() => setShowTestCardInfo(false)}
+										className="text-emerald-500 font-bold text-lg px-2 hover:bg-gray-700 rounded-md"
+									>
+										✕
+									</button>
+								</div>
+							)}
+
 							<OrderSummary />
 							<GiftCouponCard />
 						</motion.div>
