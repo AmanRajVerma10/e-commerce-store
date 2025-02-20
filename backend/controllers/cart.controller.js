@@ -51,6 +51,18 @@ export const removeAllFromCart = async (req, res) => {
   }
 };
 
+export const clearCart=async(req,res)=>{
+  try {
+    const user= req.user;
+    user.cartItems=[];
+    await user.save();
+    res.status(200).json({message:"Cart cleared successfully"});
+  } catch (error) {
+    console.log("Error in clearCart: ", error.message);
+    res.status(500).json({ message: error.message });
+  }
+}
+
 export const updateQuantity = async (req, res) => {
   try {
     const { id: productId } = req.params;

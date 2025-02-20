@@ -12,7 +12,6 @@ const ProductCard = ({ product }) => {
 			return;
 		} else {
 			addToCart(product);
-			toast.success("Product added to cart");
 		}
 	};
 
